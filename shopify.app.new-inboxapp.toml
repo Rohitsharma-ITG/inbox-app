@@ -1,0 +1,28 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "d1d0c7ca131b5d572ddcebc610abcbe6"
+application_url = "https://reaches-packets-samuel-excuse.trycloudflare.com"
+embedded = true
+name = "new-inboxapp"
+handle = "new-inboxapp-22"
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-01"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://reaches-packets-samuel-excuse.trycloudflare.com/auth/callback",
+  "https://reaches-packets-samuel-excuse.trycloudflare.com/auth/shopify/callback",
+  "https://reaches-packets-samuel-excuse.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
