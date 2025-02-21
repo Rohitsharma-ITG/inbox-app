@@ -5,7 +5,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-
+import Navbar from "./routes/app.navbar/route";
 export default function App() {
   return (
     <html>
@@ -21,6 +21,7 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <Navbar />
         <Outlet />
         <ScrollRestoration />
         <Scripts />

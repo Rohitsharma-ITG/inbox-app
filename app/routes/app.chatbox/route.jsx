@@ -250,7 +250,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocation,useNavigate } from "@remix-run/react";
-import { TextField, Button, Card, Page, Layout } from "@shopify/polaris";
+import { TextField, Button, Card, Page, Layout,Spinner } from "@shopify/polaris";
 import { io } from "socket.io-client";
 import { set } from "mongoose";
 
@@ -263,6 +263,7 @@ export default function Chat() {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const [userId, setUserId] = useState("");
   const [role, setrole] = useState("support");
@@ -310,6 +311,7 @@ const handleChats = async () => {
         navigate("/app/customerlist");
       }
       setChats(data.chats);
+      setLoading(false);
       if (data.userId) {
         setUserId(data.userId);
         setrole(data.role);
@@ -329,6 +331,17 @@ const handleChats = async () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Page>
+        <Layout>
+          <Layout.Section>
+            <Spinner accessibilityLabel="Loading user list" size="large" />
+          </Layout.Section>
+        </Layout>
+      </Page>
+    );
+  }
   return (
     <Page title="Chat with Customer">
       <Layout>

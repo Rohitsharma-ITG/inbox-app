@@ -1,10 +1,10 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "d1d0c7ca131b5d572ddcebc610abcbe6"
-application_url = "https://col-monsters-tribes-lightning.trycloudflare.com"
+client_id = "28014b7b07be4779e020d894c1343435"
+application_url = "https://yard-antonio-jade-bidding.trycloudflare.com"
 embedded = true
 name = "new-inboxapp"
-handle = "new-inboxapp-22"
+handle = "new-inboxapp-25"
 
 [build]
 include_config_on_deploy = true
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://col-monsters-tribes-lightning.trycloudflare.com/auth/callback",
-  "https://col-monsters-tribes-lightning.trycloudflare.com/auth/shopify/callback",
-  "https://col-monsters-tribes-lightning.trycloudflare.com/api/auth/callback"
+  "https://yard-antonio-jade-bidding.trycloudflare.com/auth/callback",
+  "https://yard-antonio-jade-bidding.trycloudflare.com/auth/shopify/callback",
+  "https://yard-antonio-jade-bidding.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
