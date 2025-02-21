@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "d1d0c7ca131b5d572ddcebc610abcbe6"
-application_url = "https://reaches-packets-samuel-excuse.trycloudflare.com"
+application_url = "https://col-monsters-tribes-lightning.trycloudflare.com"
 embedded = true
 name = "new-inboxapp"
 handle = "new-inboxapp-22"
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://reaches-packets-samuel-excuse.trycloudflare.com/auth/callback",
-  "https://reaches-packets-samuel-excuse.trycloudflare.com/auth/shopify/callback",
-  "https://reaches-packets-samuel-excuse.trycloudflare.com/api/auth/callback"
+  "https://col-monsters-tribes-lightning.trycloudflare.com/auth/callback",
+  "https://col-monsters-tribes-lightning.trycloudflare.com/auth/shopify/callback",
+  "https://col-monsters-tribes-lightning.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
