@@ -4,10 +4,8 @@ import Collection from "../../models/collection.model";
 export const loader = async () => {
     try {
       const collections = await Collection.find(); 
-      // console.log("collections--:", collections);
       return json({ collections }); 
     } catch (error) {
-      // console.error("Error fetching collections:", error);
       return json({ error: "Internal Server Error" }, { status: 500 });
     }
   };

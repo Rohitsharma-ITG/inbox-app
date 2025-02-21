@@ -20,6 +20,9 @@ const Navbar = () => {
         <li>
           <Link to="/app/collectionlist" className="nav-link">Our Collection</Link>
         </li>
+        <li>
+          <Link to="/app/updatecollection" className="nav-link">Update Collection</Link>
+        </li>
       </ul>
     </nav>
   );

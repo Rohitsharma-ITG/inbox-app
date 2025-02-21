@@ -12,7 +12,7 @@ import {
 } from "@shopify/polaris";
 import "./collection.css";
 
-export default function CollectionList() {
+export default function updateCollection() {
   const [collections, setCollections] = useState([]);
   const [fullfilled, setfullfilled] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -45,20 +45,20 @@ export default function CollectionList() {
     fetchData();
   }, []);
 
-  // const handleCollectionClick = async () => {
-  //   const res = await fetch("/api/updatecollection", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       id: titleubdated.id,
-  //       title: titleubdated.title,
-  //     }),
-  //   });
-  //   const data = await res.json();
-  //   fetchData();
-  // };
+  const handleCollectionClick = async () => {
+    const res = await fetch("/api/updatecollection", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: titleubdated.id,
+        title: titleubdated.title,
+      }),
+    });
+    const data = await res.json();
+    fetchData();
+  };
 
   if (loading) {
     return (
@@ -89,7 +89,7 @@ export default function CollectionList() {
       <div className="collection-container">
         <div className="collection-top">
           <h2 className="collection-title">Our Collections</h2>
-          {/* <div className="collection-form">
+          <div className="collection-form">
             <TextField
               label="Collection Title"
               value={titleubdated.title}
@@ -99,19 +99,19 @@ export default function CollectionList() {
               fullWidth
             />
             <button onClick={handleCollectionClick}>Update</button>
-          </div> */}
+          </div>
         </div>
         <div className="collection-grid">
           {collections.map((collection) => (
             <div
               key={collection.collectionId}
               className="collection-card"
-              // onClick={() =>
-              //   settitleubdated({
-              //     id: collection.collectionId,
-              //     title: collection.title,
-              //   })
-              // }
+              onClick={() =>
+                settitleubdated({
+                  id: collection.collectionId,
+                  title: collection.title,
+                })
+              }
             >
               {collection.image && (
                 <img src={collection.image} className="collection-image" />
