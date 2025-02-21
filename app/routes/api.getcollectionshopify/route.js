@@ -1,13 +1,13 @@
 import { authenticate } from "../../shopify.server";
 import { json } from "@remix-run/node";
 import Collection from "../../models/collection.model";
+import { User } from "../../models/user.model";
 
 export const loader = async ({ request }) => {
   try {
     // console.log("Trying to fetch collections...");
 
     const { admin } = await authenticate.admin(request);
-
     const response = await admin.graphql(
       `#graphql
           query GetAllCollections {
@@ -52,3 +52,5 @@ export const loader = async ({ request }) => {
     return json({ error: "Failed to fetch collections" }, { status: 500 });
   }
 };
+
+
