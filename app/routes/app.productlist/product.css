@@ -1,5 +1,5 @@
 /* Collection Container */
-.collection-container {
+.product-container {
     max-width: 1200px;
     margin: auto;
     text-align: center;
@@ -7,7 +7,7 @@
   }
   
   /* Title Styling */
-  .collection-title {
+  .product-title {
     font-size: 2.5rem;
     font-weight: bold;
     color: #333;
@@ -15,7 +15,7 @@
   }
   
   /* Grid Layout */
-  .collection-grid {
+  .product-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
@@ -23,7 +23,7 @@
   }
   
   /* Individual Collection Card */
-  .collection-card {
+  .product-card {
     background: white;
     border-radius: 10px;
     overflow: hidden;
@@ -31,13 +31,13 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   
-  .collection-card:hover {
+  .product-card:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   }
   
   /* Collection Image */
-  .collection-image {
+  .product-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
@@ -45,14 +45,14 @@
   }
   
   /* Collection Name */
-  .collection-name {
+  .product-name {
     font-size: 1.2rem;
     font-weight: bold;
     color: #555;
     padding: 15px;
   }
 
-  .collection-top {
+  .product-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -70,23 +70,23 @@ button.export-button {
   
   /* Responsive Design */
   @media (max-width: 900px) {
-    .collection-grid {
+    .product-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
   
   @media (max-width: 600px) {
-    .collection-grid {
+    .product-grid {
       grid-template-columns: repeat(1, 1fr);
     }
   }
-  .collection-form {
+  .product-form {
     display: flex;
     align-items: self-end;
     gap: 20px;
 }
 
-.collection-form button {
+.product-form button {
     padding: 8px 10px;
     border: none;
     background: red;
@@ -121,7 +121,7 @@ button.update-button-2 {
   margin-top: 10px;
 }
 
-.collection-form-update {
+.product-form-update {
   width: 80%;
   margin: auto;
 }

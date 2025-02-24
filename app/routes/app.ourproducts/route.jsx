@@ -10,10 +10,10 @@ import {
   ResourceItem,
   Avatar,
 } from "@shopify/polaris";
-import "./collection.css";
+import "./products.css";
 
 export default function updateCollection() {
-  const [collections, setCollections] = useState([]);
+  const [products, setCollections] = useState([]);
   const [fullfilled, setfullfilled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [titleubdated, settitleubdated] = useState({
@@ -23,21 +23,21 @@ export default function updateCollection() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/collectionlist");
+      const response = await fetch("/api/productlist");
       const result = await response.json();
       console.log("response", response);
       console.log("result", result);
-      if (result.collections.length == 0) {
+      if (result.products.length == 0) {
         setLoading(false);
         setfullfilled(true);
-      } else if (result.collections) {
-        setCollections(result.collections);
+      } else if (result.products) {
+        setCollections(result.products);
         setLoading(false);
       } else {
-        console.error("No collections found in response");
+        console.error("No products found in response");
       }
     } catch (error) {
-      console.error("Error fetching collections:", error);
+      console.error("Error fetching products:", error);
     }
   };
 
@@ -46,7 +46,7 @@ export default function updateCollection() {
   }, []);
 
   const handleCollectionClick = async () => {
-    const res = await fetch("/api/updatecollection", {
+    const res = await fetch("/api/editproduct", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -65,8 +65,8 @@ export default function updateCollection() {
   };
 
   const handleDeleteCollection = async (deleteId) => {
-    const res = await fetch("/api/deletecollection", {
-      method: "POST",
+    const res = await fetch("/api/editproduct", {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
@@ -94,8 +94,8 @@ export default function updateCollection() {
       <Page>
         <Layout>
           <Layout.Section>
-            <h2 className="collection-title" style={{ color: "red" }}>
-              No Collection Found
+            <h2 className="product-title" style={{ color: "red" }}>
+              No Product Found
             </h2>
           </Layout.Section>
         </Layout>
@@ -104,30 +104,19 @@ export default function updateCollection() {
   }
   return (
     <div>
-      <div className="collection-container">
-        <div className="collection-top">
-          <h2 className="collection-title">Our Collections</h2>
-          {/* <div className="collection-form">
-            <TextField
-              label="Collection Title"
-              value={titleubdated.title}
-              onChange={(value) =>
-                settitleubdated({ ...titleubdated, title: value })
-              }
-              fullWidth
-            />
-            <button onClick={handleCollectionClick}>Update</button>
-          </div> */}
+      <div className="product-container">
+        <div className="product-top">
+          <h2 className="product-title">Our Products</h2>
         </div>
-        <div className="collection-grid">
-          {collections.map((collection) => (
-            <div key={collection.collectionId} className="collection-card">
-              {collection.image && (
-                <img src={collection.image} className="collection-image" />
+        <div className="product-grid">
+          {products.map((product) => (
+            <div key={product.productId} className="product-card">
+              {product.image && (
+                <img src={product.image} className="product-image" />
               )}
-              {(collection.collectionId == titleubdated.id ) ?  <div className="collection-form-update">
+              {(product.productId == titleubdated.id ) ?  <div className="product-form-update">
                   <TextField
-                    label="Collection Title"
+                    label="Product Title"
                     value={titleubdated.title}
                     onChange={(value) =>
                       settitleubdated({ ...titleubdated, title: value })
@@ -135,12 +124,12 @@ export default function updateCollection() {
                   />
                   <button onClick={handleCollectionClick} className="update-button update-button-2 ">Update</button>
                 </div> :  <> 
-                <h3 className="collection-name">{collection.title}</h3>
+                <h3 className="product-name">{product.title}</h3>
                 <button
                 onClick={() =>
                   settitleubdated({
-                    id: collection.collectionId,
-                    title: collection.title,
+                    id: product.productId,
+                    title: product.title,
                   })
                 }
                 className="update-button"
@@ -149,7 +138,7 @@ export default function updateCollection() {
               </button></>}
              
               <button
-                onClick={() => handleDeleteCollection(collection.collectionId)}
+                onClick={() => handleDeleteCollection(product.productId)}
                 className="delete-button"
               >
                 Delete
