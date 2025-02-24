@@ -15,7 +15,6 @@
   color: white;
 }
 
-/* Navigation Styling */
 .nav-links {
   display: flex;
   gap: 20px;
@@ -24,25 +23,74 @@
   margin: 0;
 }
 
-/* Links Styling */
 .nav-link {
   text-decoration: none;
   color: white;
   font-size: 16px;
   font-weight: 500;
+  position: relative;
   padding: 10px 15px;
   border-radius: 5px;
   transition: all 0.3s ease;
 }
 
-/* Active Link Styling */
-.nav-link.active {
-  background: white;
-  color: #007aff;
-  font-weight: bold;
+a.nav-link:after {
+  position: absolute;
+  content: "";
+  width: 0%;
+  height: 2px;
+  background: #ff003b;
+  left: 14px;
+  bottom: 7px;
+  transition: all 0.3s ease;
 }
 
-/* Hover Effect */
-.nav-link:hover {
-  background: rgba(255, 255, 255, 0.2);
+a.nav-link:hover:after {
+  width: 75%;
 }
+
+.nav a {
+  display: block;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: bold;
+  transition: 0.3s;
+  padding: 15px 17px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.drop-down{
+  position: relative;
+  transition: all 0.5s ease;
+}
+
+.drop-down:hover .sub-menu {
+  opacity: 2;
+  visibility: visible;
+  transform: rotateX(0deg);
+}
+
+.sub-menu {
+  position: absolute;
+  left: 0;
+  top: 35px;
+  background: #1A81F4;
+  width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transform: rotateX(85deg);
+  transform-origin: top;
+  transition: all 0.5s ease;
+  z-index: 45;
+}
+
+.sub-menu ul {
+  list-style: none;
+  padding: 15px 10px;
+}
+.sub-menu li {
+  padding: 6px 0px;
+}
+
+
