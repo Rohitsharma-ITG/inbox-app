@@ -1,0 +1,42 @@
+.edit-buttons {
+    position: absolute;
+    top: 0;
+    left: 110px;
+    /* display: none; */
+    cursor: pointer;
+}
+
+.edit-buttons p {
+    background: white;
+    padding: 5px 30px 6px 7px;
+    display: flex;
+    justify-content: start;
+    border: 1px solid;
+}
+
+p.delete-btn {
+    background: red;
+    color: white;
+    border: none;
+}
+
+p.edit-btn {
+    background: #007cc5;
+    border: none;
+    color: white;
+}
+
+.click-btns p {
+    height: 5px;
+}
+
+.click-btns {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 10px 10px 0px;
+    position: absolute;
+    top: -23px;
+    left: -10px;
+    font-size: 23px;
+    cursor: pointer;
+}
