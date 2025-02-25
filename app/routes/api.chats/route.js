@@ -147,7 +147,7 @@ export const loader = async ({ request }) => {
 
   try {
     const chats = await Chat.find({ customerId });
-    console.log('chats',chats);
+    // console.log('chats',chats);
     if (!chats) {
       return Response.json({ message: "No chats found", status: 404  });
     }
@@ -199,10 +199,13 @@ const onlineUsers = new Map();
 io.on("connection", (socket) => {
   socket.on("joinChat", (userId) => {
     onlineUsers.set(userId, socket.id);
+    const data = Array.from(onlineUsers.keys());
+    console.log(`User Array ${data}`);
+
     console.log(`User ${userId} joined`);
   });
-  socket.on("sendMessage", async ({ userId, message,role }) => {
-    console.log('message',message);
+  socket.on("sendMessage", async ({ userId, message,role,file }) => {
+    console.log('message',message,file);
     try {
       let user = await User.findById(userId);
       if (!user) {
@@ -213,22 +216,37 @@ io.on("connection", (socket) => {
         chat.messages.push({
           sender: role,
           message,
+          file,
         });
       } else {
         chat = new Chat({
           customerId: userId,
-          messages: [{ sender: role, message }],
+          messages: [{ sender: role, message,file }],
         });
       }
 
       await chat.save();
       const dataa = [chat]
       io.emit("newMessage", dataa);
-      console.log(`New message from support to ${userId}: ${message}`);
+      console.log(`New message from ${userId}: ${message}`);
     } catch (error) {
       console.error("Error sending message:", error);
     }
   });
+
+  socket.on("typing", ({ userId, role }) => {
+    // console.log(`User ${userId} is typing`);
+    io.emit("userTyping", { userId, role });
+  });
+  socket.on("typing2", ({ userId, role }) => {
+    // console.log(`User ${userId} is typing`);
+    io.emit("user2Typing", { userId, role });
+  });
+
+  socket.on("chatupdate", (userId) => {
+    io.emit("chagedChat", { userId});
+  });
+
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
     onlineUsers.forEach((value, key) => {
@@ -239,6 +257,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () => {
+server.listen(3002, () => {
   console.log("Server running on port 3001");
 });
