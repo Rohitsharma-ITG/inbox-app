@@ -30,8 +30,6 @@
 //   }
 // };
 
-
-
 // export const action = async ({ request }) => {
 
 //      if (request.method == "POST") {
@@ -76,15 +74,15 @@
 //         if (!user) {
 //           return Response.json({ error: "User not found" }, { status: 404 });
 //         }
-  
+
 //         let chat = await Chat.findOne({ customerId: userId });
-  
+
 //         if (chat) {
 //           chat.messages.push({
 //             sender: users.role,
 //             message: body.message,
 //           });
-  
+
 //           await chat.save();
 //           return Response.json({
 //             message: "Message added to existing chat",
@@ -93,7 +91,7 @@
 //         } else {
 //           chat = new Chat({
 //             customerId: userId,
-  
+
 //             messages: [
 //               {
 //                 sender: user.role,
@@ -102,7 +100,7 @@
 //               },
 //             ],
 //           });
-  
+
 //           await chat.save();
 //           return Response.json({ message: "New chat created", chat });
 //         }
@@ -120,15 +118,12 @@
 
 // };
 
-
 import { Chat } from "../../models/chats.model";
 import { User } from "../../models/user.model";
 import { authenticate } from "../../shopify.server";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import express from "express";
-
-
 
 export const loader = async ({ request }) => {
   const { session } = await authenticate.admin(request);
@@ -149,9 +144,14 @@ export const loader = async ({ request }) => {
     const chats = await Chat.find({ customerId });
     // console.log('chats',chats);
     if (!chats) {
-      return Response.json({ message: "No chats found", status: 404  });
+      return Response.json({ message: "No chats found", status: 404 });
     }
-    return Response.json({ chats , status : 200 ,userId:customerId,role:user.role});
+    return Response.json({
+      chats,
+      status: 200,
+      userId: customerId,
+      role: user.role,
+    });
   } catch (error) {
     console.error(error);
     return new Response(
@@ -161,35 +161,37 @@ export const loader = async ({ request }) => {
   }
 };
 
-
-
 export const action = async ({ request }) => {
-
-     if (request.method == "POST") {
-      const {userId} = await request.json();
-      const customerId = userId;
-      try {
-        const chats = await Chat.find({ customerId });
-        if (!chats) {
-          return Response.json({ message: "No chats found", status: 404  });
-        }
-        return Response.json({ chats , status : 200 });
-      } catch (error) {
-        console.error(error);
-        return new Response(
-          JSON.stringify({ message: "Error fetching chats", error: error.message }),
-          { status: 500 },
-        );
+  if (request.method == "POST") {
+    const { session } = await authenticate.admin(request);
+    const shop = session.shop;
+    let support = await User.findOne({ email: shop });
+    const { userId } = await request.json();
+    const customerId = userId;
+    try {
+      const chats = await Chat.find({ customerId });
+      if (!chats) {
+        return Response.json({ message: "No chats found", status: 404 });
       }
-     }  
-}
-
+      return Response.json({ chats, activeUserId: support._id, status: 200 });
+    } catch (error) {
+      console.error(error);
+      return new Response(
+        JSON.stringify({
+          message: "Error fetching chats",
+          error: error.message,
+        }),
+        { status: 500 },
+      );
+    }
+  }
+};
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", 
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
   },
@@ -197,15 +199,28 @@ const io = new Server(server, {
 
 const onlineUsers = new Map();
 io.on("connection", (socket) => {
-  socket.on("joinChat", (userId) => {
-    onlineUsers.set(userId, socket.id);
-    const data = Array.from(onlineUsers.keys());
-    console.log(`User Array ${data}`);
-
-    console.log(`User ${userId} joined`);
+  socket.on("joinChat", async ({ userId, activeUserId }) => {
+    onlineUsers.set(activeUserId, socket.id);
+    // let user = await User.findById(activeUserId);
+    onlineUsers.forEach(async (value, key) => {
+      let activeuser = await User.findById(key);
+      if (activeuser.role == "support") {
+        io.emit("supportOnline", {
+          activeUserId : key,
+          name: activeuser.name,
+          status: "online",
+        });
+      } else {
+        io.emit("customerOnline", {
+          activeUserId: key,
+          name: activeuser.name,
+          status: "online",
+        });
+      }
+    });
   });
-  socket.on("sendMessage", async ({ userId, message,role,file }) => {
-    console.log('message',message,file);
+  socket.on("sendMessage", async ({ userId, message, role, file }) => {
+    console.log("message", message, file);
     try {
       let user = await User.findById(userId);
       if (!user) {
@@ -221,12 +236,12 @@ io.on("connection", (socket) => {
       } else {
         chat = new Chat({
           customerId: userId,
-          messages: [{ sender: role, message,file }],
+          messages: [{ sender: role, message, file }],
         });
       }
 
       await chat.save();
-      const dataa = [chat]
+      const dataa = [chat];
       io.emit("newMessage", dataa);
       console.log(`New message from ${userId}: ${message}`);
     } catch (error) {
@@ -244,19 +259,36 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chatupdate", (userId) => {
-    io.emit("chagedChat", { userId});
+    io.emit("chagedChat", { userId });
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
-    onlineUsers.forEach((value, key) => {
+   
+    onlineUsers.forEach(async (value, key) => {
       if (value === socket.id) {
+        // console.log("disconnect user id", key);
+        let user = await User.findById(key);
+        if (user.role == "support") {
+          io.emit("supportOffline", {
+            activeUserId : key,
+            name: user.name,
+            status: "offline",
+          });
+        } else {
+          io.emit("customerOffline", {
+            activeUserId : key,
+            name: user.name,
+            status: "offline",
+          });
+        }
         onlineUsers.delete(key);
+        console.log('onlineUsers',onlineUsers);
       }
     });
   });
 });
 
-server.listen(3002, () => {
+server.listen(3003, () => {
   console.log("Server running on port 3001");
 });

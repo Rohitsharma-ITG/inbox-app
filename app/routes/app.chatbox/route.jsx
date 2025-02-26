@@ -248,7 +248,7 @@
 //   );
 // }
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "@remix-run/react";
 import {
   TextField,
@@ -262,22 +262,25 @@ import "./chatboc.css";
 import { io } from "socket.io-client";
 import { set } from "mongoose";
 
-const socket = io("https://e2b0-49-249-2-6.ngrok-free.app", {
+const socket = io("https://2a6c-49-249-2-6.ngrok-free.app", {
   transports: ["websocket"],
   secure: true,
 });
 
-export default function Chat() {
+export default function Chat() {  
   const [chats, setChats] = useState([]);
+  const fileInputRef = useRef(null);
   const [btnEnable, setbtnEnable] = useState(null);
   const [message, setMessage] = useState(null);
   const [file, setFile] = useState(null);
-  const [error, setError] = useState("");
+  const [activeUserId, setactiveUserId] = useState("67b6f7dce0411ec61f6c9679");
   const [loading, setLoading] = useState(true);
   const [typingMessage, setTypingMessage] = useState("");
   const location = useLocation();
   const [userId, setUserId] = useState("");
   const [role, setrole] = useState("support");
+  const [useronline, setuseronline] = useState("offline")
+  const [onlineuserId, setonlineuserId] = useState('')
   const [editContent, setEditContent] = useState({
     chatId: "",
     messageId: "",
@@ -297,16 +300,27 @@ export default function Chat() {
   useEffect(() => {
     if (userId) {
       handleChats();
-      socket.emit("joinChat", userId);
+      socket.emit("joinChat", {userId,activeUserId});
     }
     socket.on("newMessage", (newChat) => {
       console.log("newChat", newChat);
       setChats(newChat);
     });
-    
+
     socket.on("chagedChat", (userId) => {
-      handleChats();      
+      handleChats();
     });
+     
+    socket.on("customerOnline", ({ activeUserId, name , status }) => {
+      setuseronline(status)
+      console.log("activeUserId",activeUserId)
+      setonlineuserId(activeUserId)
+    });
+
+    socket.on("customerOffline", ({ activeUserId, name , status }) => {
+      setuseronline(status)
+    });
+
 
     socket.on("userTyping", ({ userId, role }) => {
       setTypingMessage(` is typing...`);
@@ -317,6 +331,8 @@ export default function Chat() {
       socket.off("newMessage");
       socket.off("userTyping");
       socket.off("chagedChat");
+      socket.off("supportOnline");
+      socket.off("supportOffline");
     };
   }, [userId]);
 
@@ -339,9 +355,11 @@ export default function Chat() {
         navigate("/app/customerlist");
       }
       setChats(data.chats);
+      setactiveUserId("67b6f7dce0411ec61f6c9679");
       setLoading(false);
       if (data.userId) {
         setUserId(data.userId);
+        setactiveUserId(data.userId);
         setrole(data.role);
       }
     } catch (error) {
@@ -372,6 +390,9 @@ export default function Chat() {
 
     setMessage("");
     setFile("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleTyping = () => {
@@ -385,7 +406,7 @@ export default function Chat() {
       });
       const data = await res.json();
       if (data.success) {
-        socket.emit("chatupdate", userId );
+        socket.emit("chatupdate", userId);
       } else {
         console.error("Error deleting message:", data.message);
       }
@@ -413,7 +434,7 @@ export default function Chat() {
         });
         setMessage("");
         // handleChats();
-        socket.emit("chatupdate", userId );
+        socket.emit("chatupdate", userId);
         setbtnEnable(null);
       } else {
         console.error("Error updating message:", data.message);
@@ -434,68 +455,14 @@ export default function Chat() {
       </Page>
     );
   }
+  console.log("-------",onlineuserId,"-----")
   return (
     <Page title="Chat with Customer">
+    {
+      (useronline == "online" && onlineuserId == chats[0].customerId) ? <p style={{fontSize:"17px",color:"green"}}>Online</p> : <p style={{fontSize:"17px",color:"red"}}>Offline</p>
+    }
       <Layout>
         <Layout.Section>
-          {/* <Card sectioned>
-            <div
-              style={{
-                height: "60vh",
-                overflowY: "auto",
-                padding: "10px",
-                backgroundColor: "#ffcbb8",
-              }}
-            >
-              {chats &&
-                chats.map((chat, index) => (
-                  <li key={index} style={{ listStyle: "none" }}>
-                    <ul style={{ listStyle: "none" }}>
-                      {chat.messages.map((item, msgIndex) => (
-                        <li
-                          key={msgIndex}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent:
-                              item.sender === "support" ? "start" : "end",
-                          }}
-                        >
-                          {item.message && (
-                            <p
-                              style={{
-                                backgroundColor:
-                                  item.sender === "support"
-                                    ? "#007ace"
-                                    : "#5c5f62",
-                                marginBottom: "8px",
-                                padding: "8px",
-                                borderRadius: "8px",
-                                color: "white",
-                              }}
-                            >
-                              {item.message}
-                            </p>
-                          )}
-                          {item.file && (
-                            <img
-                              src={item.file}
-                              alt="image"
-                              style={{ width: "100px" }}
-                            />
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-            </div>
-            {typingMessage && (
-              <p style={{ padding: "10px", fontStyle: "italic" }}>
-                {typingMessage}
-              </p>
-            )}
-          </Card> */}
           <Card sectioned>
             <div
               style={{
@@ -601,6 +568,11 @@ export default function Chat() {
                   </li>
                 ))}
             </div>
+            {typingMessage && (
+              <p style={{ padding: "10px", fontStyle: "italic" }}>
+                {typingMessage}
+              </p>
+            )}
           </Card>
         </Layout.Section>
         <Layout.Section>
@@ -642,6 +614,7 @@ export default function Chat() {
                 <input
                   type="file"
                   name="image"
+                  ref={fileInputRef}
                   onChange={(value) => {
                     setFile(value.target.files[0]);
                   }}
