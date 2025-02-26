@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "fed1c0b8ee8b3f4ab026aeb37eb4ef10"
-application_url = "https://bolt-situated-geology-shaft.trycloudflare.com"
+application_url = "https://regulations-consumer-dec-dollar.trycloudflare.com"
 embedded = true
 name = "new-inboxapp"
 handle = "new-inboxapp-31"
@@ -19,9 +19,9 @@ scopes = "read_customers,read_product_listings,write_customers,write_products"
 
 [auth]
 redirect_urls = [
-  "https://bolt-situated-geology-shaft.trycloudflare.com/auth/callback",
-  "https://bolt-situated-geology-shaft.trycloudflare.com/auth/shopify/callback",
-  "https://bolt-situated-geology-shaft.trycloudflare.com/api/auth/callback"
+  "https://regulations-consumer-dec-dollar.trycloudflare.com/auth/callback",
+  "https://regulations-consumer-dec-dollar.trycloudflare.com/auth/shopify/callback",
+  "https://regulations-consumer-dec-dollar.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
