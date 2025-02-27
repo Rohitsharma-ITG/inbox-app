@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "@remix-run/react";
 import {
   Card,
   Layout,
@@ -15,6 +16,9 @@ import "./products.css";
 export default function updateCollection() {
   const [products, setCollections] = useState([]);
   const [fullfilled, setfullfilled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [orderId, setorderId] = useState("");
   const [loading, setLoading] = useState(true);
   const [titleubdated, settitleubdated] = useState({
     id: "",
@@ -43,6 +47,10 @@ export default function updateCollection() {
 
   useEffect(() => {
     fetchData();
+    const orderId = location.state;
+    if (orderId) {
+      setorderId(orderId);
+    }
   }, []);
 
   const handleCollectionClick = async () => {
@@ -59,9 +67,9 @@ export default function updateCollection() {
     const data = await res.json();
     fetchData();
     settitleubdated({
-    id: "",
-    title: "",
-  });
+      id: "",
+      title: "",
+    });
   };
 
   const handleDeleteCollection = async (deleteId) => {
@@ -76,6 +84,29 @@ export default function updateCollection() {
     });
     const data = await res.json();
     fetchData();
+  };
+
+  const handleAddProductOrder = async (productId) => {
+    const res = await fetch("/api/getorder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        orderId: orderId,
+        productId: productId,
+        quantity: 1,
+      }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      navigate("/app/orders");
+    }
+    fetchData();
+    settitleubdated({
+      id: "",
+      title: "",
+    });
   };
 
   if (loading) {
@@ -114,35 +145,62 @@ export default function updateCollection() {
               {product.image && (
                 <img src={product.image} className="product-image" />
               )}
-              {(product.productId == titleubdated.id ) ?  <div className="product-form-update">
-                  <TextField
-                    label="Product Title"
-                    value={titleubdated.title}
-                    onChange={(value) =>
-                      settitleubdated({ ...titleubdated, title: value })
-                    }
-                  />
-                  <button onClick={handleCollectionClick} className="update-button update-button-2 ">Update</button>
-                </div> :  <> 
+
+              {orderId ? (
+               <>
                 <h3 className="product-name">{product.title}</h3>
                 <button
-                onClick={() =>
-                  settitleubdated({
-                    id: product.productId,
-                    title: product.title,
-                  })
-                }
-                className="update-button"
-              >
-                Update
-              </button></>}
-             
-              <button
-                onClick={() => handleDeleteCollection(product.productId)}
-                className="delete-button"
-              >
-                Delete
-              </button>
+                  onClick={() => {
+                    handleAddProductOrder(product.productId);
+                  }}
+                  className="update-button"
+                >
+                  add in order
+                </button>
+               </>
+              ) : (
+                <>
+                  {product.productId == titleubdated.id ? (
+                    <div className="product-form-update">
+                      <TextField
+                        label="Product Title"
+                        value={titleubdated.title}
+                        onChange={(value) =>
+                          settitleubdated({ ...titleubdated, title: value })
+                        }
+                      />
+                      <button
+                        onClick={handleCollectionClick}
+                        className="update-button update-button-2 "
+                      >
+                        Update
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="product-name">{product.title}</h3>
+                      <button
+                        onClick={() =>
+                          settitleubdated({
+                            id: product.productId,
+                            title: product.title,
+                          })
+                        }
+                        className="update-button"
+                      >
+                        Update
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    onClick={() => handleDeleteCollection(product.productId)}
+                    className="delete-button"
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
             </div>
           ))}
         </div>
