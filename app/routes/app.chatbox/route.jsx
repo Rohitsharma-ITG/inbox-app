@@ -262,7 +262,7 @@ import "./chatboc.css";
 import { io } from "socket.io-client";
 import { set } from "mongoose";
 
-const socket = io("https://2a6c-49-249-2-6.ngrok-free.app", {
+const socket = io("https://801e-49-249-2-6.ngrok-free.app", {
   transports: ["websocket"],
   secure: true,
 });
@@ -277,6 +277,7 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
   const [typingMessage, setTypingMessage] = useState("");
   const location = useLocation();
+  const [username, setusername] = useState('')
   const [userId, setUserId] = useState("");
   const [role, setrole] = useState("support");
   const [useronline, setuseronline] = useState("offline")
@@ -289,12 +290,16 @@ export default function Chat() {
 
   const navigate = useNavigate();
   useEffect(() => {
-    const userIds = location.state;
-    if (userIds) {
-      setUserId(userIds);
+    const userinfo = location.state;
+    if (userinfo) {
+      if (userinfo.userId) {
+        setUserId(userinfo.userId);
+        setusername(userinfo.name)
+      }
     } else {
-      handleChats();
+        handleChats();
     }
+
   }, [location.state]);
 
   useEffect(() => {
@@ -313,7 +318,6 @@ export default function Chat() {
      
     socket.on("customerOnline", ({ activeUserId, name , status }) => {
       setuseronline(status)
-      console.log("activeUserId",activeUserId)
       setonlineuserId(activeUserId)
     });
 
@@ -457,7 +461,7 @@ export default function Chat() {
   }
   console.log("-------",onlineuserId,"-----")
   return (
-    <Page title="Chat with Customer">
+    <Page title={`Chat with ${username}`} >
     {
       (useronline == "online" && onlineuserId == chats[0].customerId) ? <p style={{fontSize:"17px",color:"green"}}>Online</p> : <p style={{fontSize:"17px",color:"red"}}>Offline</p>
     }

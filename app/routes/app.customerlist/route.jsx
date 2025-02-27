@@ -86,8 +86,9 @@ export default function MessageList() {
     fetchData();
   }, []);
 
-  const passId = (userId) => {
-    navigate("/app/chatbox", { state: userId });
+  const passId = (userId,name) => { 
+    const userinfo = { userId, name };
+    navigate("/app/chatbox", { state: userinfo });
   };
 
   if (loading) {
@@ -127,7 +128,7 @@ export default function MessageList() {
               renderItem={(user) => {
                 const { _id, name } = user;
                 return (
-                  <ResourceItem id={_id} onClick={() => passId(_id)}>
+                  <ResourceItem id={_id} onClick={() => passId(_id,name)}>
                     <Avatar customer name={name} /> 
                     <Text variant="bodyMd" fontWeight="bold">
                       {name}
