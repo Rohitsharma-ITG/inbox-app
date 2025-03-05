@@ -7,9 +7,14 @@ const Navbar = () => {
       <nav className="navbar">
         <div className="logo">MyApp</div>
         <ul className="nav-links">
+        {/* <li>
+            <Link to="/app" className="nav-link">
+              Home
+            </Link>
+          </li> */}
           <li>
-            <Link to="/app/chatbox" className="nav-link">
-              Chat Box
+            <Link to="/app/customerlist" className="nav-link">
+              Customer list
             </Link>
           </li>
           <li className="drop-down">
@@ -51,8 +56,8 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/app" className="nav-link">
-              Home
+            <Link to="/app/segments" className="nav-link">
+              Customer Segment
             </Link>
           </li>
          

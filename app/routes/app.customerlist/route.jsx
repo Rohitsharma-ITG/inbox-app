@@ -117,6 +117,10 @@ export default function MessageList() {
     );
   }
 
+  if (data.length == 0) {
+    <h2>No Customer Found</h2>
+  }
+
   return (
     <Page title="Customer List">
       <Layout>

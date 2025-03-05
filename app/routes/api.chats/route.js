@@ -162,10 +162,13 @@ export const loader = async ({ request }) => {
 };
 
 export const action = async ({ request }) => {
+  // console.log('actionrun');
   if (request.method == "POST") {
     const { session } = await authenticate.admin(request);
+    console.log('support33',session);
     const shop = session.shop;
     let support = await User.findOne({ email: shop });
+  
     const { userId } = await request.json();
     const customerId = userId;
     try {

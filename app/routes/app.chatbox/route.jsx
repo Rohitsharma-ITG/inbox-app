@@ -262,7 +262,7 @@ import "./chatboc.css";
 import { io } from "socket.io-client";
 import { set } from "mongoose";
 
-const socket = io("https://801e-49-249-2-6.ngrok-free.app", {
+const socket = io("https://6929-49-249-2-6.ngrok-free.app", {
   transports: ["websocket"],
   secure: true,
 });
@@ -273,7 +273,7 @@ export default function Chat() {
   const [btnEnable, setbtnEnable] = useState(null);
   const [message, setMessage] = useState(null);
   const [file, setFile] = useState(null);
-  const [activeUserId, setactiveUserId] = useState("67b6f7dce0411ec61f6c9679");
+  const [activeUserId, setactiveUserId] = useState("67c13fff85591a5f879b2c53");
   const [loading, setLoading] = useState(true);
   const [typingMessage, setTypingMessage] = useState("");
   const location = useLocation();
@@ -359,7 +359,8 @@ export default function Chat() {
         navigate("/app/customerlist");
       }
       setChats(data.chats);
-      setactiveUserId("67b6f7dce0411ec61f6c9679");
+      console.log("gdfgdf",data)
+      setactiveUserId("67c13fff85591a5f879b2c53");
       setLoading(false);
       if (data.userId) {
         setUserId(data.userId);
